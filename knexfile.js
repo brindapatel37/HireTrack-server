@@ -9,3 +9,6 @@ export default {
     database: process.env.DB_NAME,
   },
 };
+
+// Job ID, company name, job title, application date, status, recruiter info,
+// job description, follow-up date, user ID

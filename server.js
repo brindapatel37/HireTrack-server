@@ -10,6 +10,12 @@ app.use(cors({ origin: CORS_ORIGIN }));
 
 const PORT = process.env.PORT || 8081;
 
+// all routes
+app.use(express.json());
+app.use("/user", userRoutes);
+app.use("/jobs", jobRoutes);
+app.use("/resume", resumeRoutes);
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
 });

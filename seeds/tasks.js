@@ -4,8 +4,8 @@
  */
 export async function seed(knex) {
   // Deletes ALL existing entries
-  await knex("jobs").del();
-  await knex("jobs").insert([
+  await knex("tasks").del();
+  await knex("tasks").insert([
     {
       user_id: 1,
       task_title: "Follow up on Google application",
