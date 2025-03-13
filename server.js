@@ -15,6 +15,7 @@ app.use(express.json());
 app.use("/user", userRoutes);
 app.use("/jobs", jobRoutes);
 app.use("/resume", resumeRoutes);
+app.use("/task", taskRoutes);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
