@@ -123,6 +123,9 @@ const updateJob = async (req, res) => {
     salary,
     notes,
   } = req.body;
+  const formattedDate = application_date
+    ? new Date(application_date).toISOString().split("T")[0]
+    : null;
 
   if (company_name && company_name === "") {
     return res.status(400).json({
@@ -170,7 +173,7 @@ const updateJob = async (req, res) => {
     if (job_title !== undefined) updatedFields.job_title = job_title;
     if (job_location !== undefined) updatedFields.job_location = job_location;
     if (application_date !== undefined)
-      updatedFields.application_date = application_date;
+      updatedFields.application_date = formattedDate;
     if (job_status !== undefined) updatedFields.job_status = job_status;
     if (job_description !== undefined)
       updatedFields.job_description = job_description;
