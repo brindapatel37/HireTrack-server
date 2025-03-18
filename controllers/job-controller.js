@@ -124,13 +124,21 @@ const updateJob = async (req, res) => {
     notes,
   } = req.body;
 
-  if (
-    company_name === undefined ||
-    job_title === undefined ||
-    job_status === undefined
-  ) {
+  if (company_name && company_name === "") {
     return res.status(400).json({
-      message: "Company name, job title, and job status are required fields.",
+      message: "Company name cannot be empty.",
+    });
+  }
+
+  if (job_title && job_title === "") {
+    return res.status(400).json({
+      message: "Job title cannot be empty.",
+    });
+  }
+
+  if (job_status && job_status === "") {
+    return res.status(400).json({
+      message: "Job status cannot be empty.",
     });
   }
 
