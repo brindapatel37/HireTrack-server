@@ -1,10 +1,8 @@
 import initKnex from "knex";
 import configuration from "../knexfile.js";
-import pkg from "validator";
-const { isEmail } = pkg;
 const knex = initKnex(configuration);
 
-const getTasks = async (_req, res) => {
+const getTasks = async (req, res) => {
   const userId = req.user.id;
   try {
     const tasks = await knex("tasks").where({ user_id: userId }).select("*");

@@ -4,7 +4,7 @@ import pkg from "validator";
 const { isEmail } = pkg;
 const knex = initKnex(configuration);
 
-const getJobs = async (_req, res) => {
+const getJobs = async (req, res) => {
   const userId = req.user.id;
   try {
     const jobs = await knex("jobs").where({ user_id: userId }).select("*");
@@ -15,7 +15,7 @@ const getJobs = async (_req, res) => {
   }
 };
 
-const getOneJob = async (_req, res) => {
+const getOneJob = async (req, res) => {
   const userId = req.user.id;
   try {
     const jobFound = await knex("jobs")
@@ -53,6 +53,9 @@ const createJob = async (req, res) => {
     salary,
     notes,
   } = req.body;
+  const formattedDate = application_date
+    ? new Date(application_date).toISOString().split("T")[0]
+    : null;
 
   if (!company_name || !job_title || !job_status) {
     return res.status(400).json({
@@ -78,15 +81,15 @@ const createJob = async (req, res) => {
         user_id: userId,
         company_name,
         job_title,
-        job_location,
-        application_date,
+        job_location: job_location || "",
+        application_date: formattedDate,
         job_status,
-        job_description,
-        recruiter_phone,
-        recruiter_email,
-        recruiter_name,
-        salary,
-        notes,
+        job_description: job_description || "",
+        recruiter_phone: recruiter_phone || "",
+        recruiter_email: recruiter_email || "",
+        recruiter_name: recruiter_name || "",
+        salary: salary || 0,
+        notes: notes || "",
       })
       .returning("id");
 
@@ -121,7 +124,11 @@ const updateJob = async (req, res) => {
     notes,
   } = req.body;
 
-  if (!company_name || !job_title || !job_status) {
+  if (
+    company_name === undefined ||
+    job_title === undefined ||
+    job_status === undefined
+  ) {
     return res.status(400).json({
       message: "Company name, job title, and job status are required fields.",
     });
@@ -148,19 +155,27 @@ const updateJob = async (req, res) => {
         message: `Job with ID ${id} not found.`,
       });
     }
-    await knex("jobs").where({ user_id: userId, id }).update({
-      company_name,
-      job_title,
-      job_location,
-      application_date,
-      job_status,
-      job_description,
-      recruiter_phone,
-      recruiter_email,
-      recruiter_name,
-      salary,
-      notes,
-    });
+
+    const updatedFields = {};
+
+    if (company_name !== undefined) updatedFields.company_name = company_name;
+    if (job_title !== undefined) updatedFields.job_title = job_title;
+    if (job_location !== undefined) updatedFields.job_location = job_location;
+    if (application_date !== undefined)
+      updatedFields.application_date = application_date;
+    if (job_status !== undefined) updatedFields.job_status = job_status;
+    if (job_description !== undefined)
+      updatedFields.job_description = job_description;
+    if (recruiter_phone !== undefined)
+      updatedFields.recruiter_phone = recruiter_phone;
+    if (recruiter_email !== undefined)
+      updatedFields.recruiter_email = recruiter_email;
+    if (recruiter_name !== undefined)
+      updatedFields.recruiter_name = recruiter_name;
+    if (salary !== undefined) updatedFields.salary = salary;
+    if (notes !== undefined) updatedFields.notes = notes;
+
+    await knex("jobs").where({ user_id: userId, id }).update(updatedFields);
 
     const updatedJob = await knex("jobs")
       .where({ user_id: userId, id })

@@ -1,13 +1,22 @@
 import express from "express";
 import "dotenv/config";
 import cors from "cors";
+import userRoutes from "./routes/user-routes.js";
+import jobRoutes from "./routes/job-routes.js";
+import taskRoutes from "./routes/task-routes.js";
+import resumeRoutes from "./routes/resume-routes.js";
 
 const app = express();
 
 const { CORS_ORIGIN } = process.env;
 
-app.use(cors({ origin: CORS_ORIGIN }));
-
+app.use(
+  cors({
+    origin: CORS_ORIGIN,
+    credentials: true, // allow credentials (tokens, cookies)
+    allowedHeaders: ["Content-Type", "Authorization"], // allow authorization header
+  })
+);
 const PORT = process.env.PORT || 8081;
 
 // all routes

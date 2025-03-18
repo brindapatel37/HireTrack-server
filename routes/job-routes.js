@@ -12,7 +12,7 @@ router
 router
   .route("/:id")
   .get(authenticate, jobController.getOneJob)
-  .put(authenticate, jobController.updateJob)
+  .patch(authenticate, jobController.updateJob)
   .delete(authenticate, jobController.deleteJob);
 
 export default router;
