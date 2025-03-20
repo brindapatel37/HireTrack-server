@@ -11,7 +11,7 @@ router
 
 router
   .route("/:id")
-  .put(authenticate, taskController.updateTask)
+  .patch(authenticate, taskController.updateTask)
   .delete(authenticate, taskController.deleteTask);
 
 export default router;

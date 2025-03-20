@@ -51,6 +51,9 @@ const updateTask = async (req, res) => {
   const { id } = req.params;
 
   const { task_title, duedate, task_status } = req.body;
+  const formattedDate = duedate
+    ? new Date(duedate).toISOString().split("T")[0]
+    : null;
 
   if (!task_title) {
     return res.status(400).json({
@@ -69,7 +72,7 @@ const updateTask = async (req, res) => {
     }
     await knex("tasks").where({ user_id: userId, id }).update({
       task_title,
-      duedate,
+      duedate: formattedDate,
       task_status,
     });
 
