@@ -9,6 +9,31 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 
 const MAX_TOKENS = 4000;
 
+async function checkModels() {
+  try {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    console.log("Model initialized successfully:", model);
+  } catch (error) {
+    console.error("Error initializing model:", error);
+  }
+}
+
+checkModels();
+
+// const listModels = async () => {
+//   try {
+//     const models = await genAI.listModels();
+//     console.log("Available Models:", models);
+//   } catch (error) {
+//     console.error("Error fetching models:", error);
+//   }
+// };
+
+// // Call this function once when your server starts
+// listModels();
+
 const getResumeFeedback = async (req, res) => {
   try {
     const { resumeText, jobDescription } = req.body;
@@ -32,7 +57,7 @@ const getResumeFeedback = async (req, res) => {
       });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "models/gemini-pro" });
 
     const prompt = `
       Analyze the following resume text. 
@@ -60,14 +85,26 @@ const getResumeFeedback = async (req, res) => {
            ${resumeText}`
       }
     `;
+    console.log("Received request with:", { resumeText, jobDescription });
+    console.log("API_KEY Loaded:", !!API_KEY);
+    console.log("Loaded API Key:", API_KEY ? "Yes" : "");
 
+    console.log("Token Count:", tokenCount);
     const result = await model.generateContent(prompt);
+    const responseText = result?.response?.candidates?.[0]?.content;
+
+    if (!responseText) {
+      console.error("Invalid response from Gemini API:", result);
+      return res
+        .status(500)
+        .json({ message: "Unexpected API response format." });
+    }
 
     let feedback;
     try {
-      feedback = JSON.parse(result.response.text());
+      feedback = JSON.parse(responseText);
     } catch (parseError) {
-      console.error("Error parsing API response:", parseError);
+      console.error("Error parsing API response:", parseError, responseText);
       return res
         .status(500)
         .json({ message: "Failed to parse feedback response." });
@@ -75,7 +112,10 @@ const getResumeFeedback = async (req, res) => {
 
     res.status(200).json(feedback);
   } catch (error) {
-    console.error("Error getting resume feedback:", error);
+    console.error(
+      "Error getting resume feedback:",
+      error?.response?.data || error
+    );
     res.status(500).json({ message: "Failed to fetch resume feedback." });
   }
 };
