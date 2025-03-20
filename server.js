@@ -8,11 +8,8 @@ import resumeRoutes from "./routes/resume-routes.js";
 
 const app = express();
 
-const { CORS_ORIGIN } = process.env;
-
 app.use(
   cors({
-    origin: CORS_ORIGIN,
     credentials: true, // allow credentials (tokens, cookies)
     allowedHeaders: ["Content-Type", "Authorization"], // allow authorization header
   })
