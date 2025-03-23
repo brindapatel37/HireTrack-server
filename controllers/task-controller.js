@@ -37,7 +37,7 @@ const createTask = async (req, res) => {
       .where({ user_id: userId, id: newTaskId })
       .first();
 
-    res.status(201).json(newJob);
+    res.status(201).json(newTask);
   } catch (error) {
     console.error("Error creating task:", error);
     res.status(500).json({
